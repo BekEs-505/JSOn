@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sileo Depiction Generator Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c9;
+            --secondary: #fd79a8;
+            --accent: #00cec9;
+            --dark: #121212;
+            --dark-light: #1e1e1e;
+            --darker: #0a0a0a;
+            --light: #2a2a2a;
+            --text-light: #e0e0e0;
+            --text-dark: #f5f5f5;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+            --card-bg: rgba(30, 30, 30, 0.9);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --gradient: linear-gradient(135deg, #6c5ce7, #00cec9, #fd79a8);
+            --gradient-alt: linear-gradient(135deg, #fd79a8, #6c5ce7, #00cec9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Tajawal', sans-serif;
+            background: var(--darker);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-icons i {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 2rem;
+            animation: float 10s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 30px;
+            background: var(--dark-light);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-circle {
+            width: 90px;
+            height: 90px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: var(--shadow);
+            font-size: 2.2rem;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 15px rgba(108, 92, 231, 0); }
+           100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--dark-light);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--dark);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-section h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .form-section h3 i {
+            margin-left: 10px;
+            font-size: 1.4rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--light);
+            color: var(--text-light);
+            transition: all 0.3s;
+            font-size: 1rem;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .dynamic-inputs {
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .input-group select {
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--light);
+            color: var(--text-light);
+            font-size: 1rem;
+            min-width: 120px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+        }
+
+        .btn-remove {
+            padding: 14px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .btn-remove:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+        }
+
+        .btn-add {
+            padding: 12px 18px;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-add i {
+            margin-left: 8px;
+        }
+
+        .btn-add:hover {
+            background: #00a085;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        button.generate-btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 12px;
+            background: var(--gradient);
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 35px auto;
+            width: 100%;
+            max-width: 350px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        button.generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-alt);
+            z-index: -1;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        button.generate-btn:hover::before {
+            opacity: 1;
+        }
+
+        button.generate-btn i {
+            margin-left: 10px;
+        }
+
+        button.generate-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.5);
+        }
+
+        button.generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .json-output {
+            margin-top: 35px;
+            padding: 25px;
+            background: var(--dark);
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        pre {
+            white-space: pre-wrap;
+            color: var(--text-light);
+            font-family: 'Consolas', monospace;
+            line-height: 1.5;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1000px;
+            opacity: 0.7;
+        }
+
+        .info-tooltip {
+            display: inline-block;
+            margin-right: 6px;
+            color: var(--primary);
+            cursor: help;
+            position: relative;
+        }
+
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: normal;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .repo-selector {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .repo-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--light);
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 1000;
+            margin-top: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .repo-dropdown.show {
+            display: block;
+        }
+
+        .repo-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+        }
+
+        .repo-item:last-child {
+            border-bottom: none;
+        }
+
+        .repo-item:hover {
+            background: var(--primary);
+        }
+
+        /* إنشاء أيقونات عشوائية تطفو في الخلفية */
+        .floating-icons i:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; animation-duration: 15s; }
+        .floating-icons i:nth-child(2) { top: 20%; left: 80%; animation-delay: 2s; animation-duration: 12s; }
+        .floating-icons i:nth-child(3) { top: 60%; left: 10%; animation-delay: 4s; animation-duration: 18s; }
+        .floating-icons i:nth-child(4) { top: 40%; left: 90%; animation-delay: 6s; animation-duration: 14s; }
+        .floating-icons i:nth-child(5) { top: 80%; left: 70%; animation-delay: 8s; animation-duration: 16s; }
+        .floating-icons i:nth-child(6) { top: 30%; left: 30%; animation-delay: 10s; animation-duration: 13s; }
+        .floating-icons i:nth-child(7) { top: 70%; left: 40%; animation-delay: 12s; animation-duration: 17s; }
+
+        @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: span 1;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group input {
+                width: 100%;
+            }
+            
+            .input-group select,
+            .btn-remove {
+                width: 100%;
+            }
+            
+            .logo-circle {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-icons">
+        <i class="fas fa-cube"></i>
+        <i class="fas fa-code"></i>
+        <i class="fas fa-mobile-alt"></i>
+        <i class="fas fa-paint-brush"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-bolt"></i>
+        <i class="fas fa-cloud"></i>
+    </div>
+
+    <div class="header">
+        <div class="logo-circle">
+            <i class="fas fa-cubes"></i>
+        </div>
+        <h1>Sileo Depiction Generator Pro</h1>
+        <p class="subtitle">أنشئ وصف Sileo احترافي بميزات متقدمة</p>
+    </div>
+
+    <div class="container">
+        <form id="depictionForm">
+            <div class="form-section full-width">
+                <h3><i class="fas fa-key"></i> إعدادات GitHub</h3>
+                <label for="githubToken">
+                    <span class="info-tooltip">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="tooltip-text">رمز الوصول الشخصي من GitHub (Personal Access Token) للوصول إلى المستودع</span>
+                    </span>
+                    GitHub Token:
+                </label>
+                <input type="password" id="githubToken" name="githubToken" placeholder="أدخل رمز الوصول الشخصي من GitHub" required>
+                
+                <div class="repo-selector">
+                    <label for="githubRepo">
+                        <span class="info-tooltip">
+                            <i class="fas fa-question-circle"></i>
+                            <span class="tooltip-text">اختر المستودع من القائمة بعد إدخال التوكن</span>
+                        </span>
+                        GitHub Repository:
+                    </label>
+                    <input type="text" id="githubRepo" name="githubRepo" placeholder="انقر هنا لاختيار مستودع" readonly required>
+                    <div id="repoDropdown" class="repo-dropdown">
+                        <!-- سيتم ملء هذا القسم بالخيارات ديناميكيًا -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section full-width">
+                <h3><i class="fas fa-image"></i> الوسائط</h3>
+                <label for="headerImage">رابط صورة العنوان:</label>
+                <input type="text" id="headerImage" name="headerImage" required>
+                
+                <label>روابط لقطات الشاشة:</label>
+                <div class="dynamic-inputs" id="screenshotUrls">
+                    <div class="input-group">
+                        <input type="text" class="screenshot-url" placeholder="رابط لقطة الشاشة" required>
+                        <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add" onclick="addScreenshotInput()">
+                    <i class="fas fa-plus"></i> إضافة رابط لقطة شاشة
+                </button>
+            </div>
+
+            <div class="form-section full-width">
+                <h3><i class="fas fa-link"></i> روابط التواصل</h3>
+                <div class="dynamic-inputs" id="socialLinks">
+                    <div class="input-group">
+                        <select class="social-type">
+                            <option value="discord">Discord</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="snapchat">Snapchat</option>
+                            <option value="twitter">Twitter</option>
+                            <option value="website">Website</option>
+                        </select>
+                        <input type="text" class="social-url" placeholder="رابط التواصل" required>
+                        <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+                <button type="button" class="btn-add" onclick="addSocialInput()">
+                    <i class="fas fa-plus"></i> إضافة رابط تواصل
+                </button>
+            </div>
+
+            <div class="form-section">
+                <h3><i class="fas fa-info-circle"></i> المعلومات الأساسية</h3>
+                <label for="description">الوصف:</label>
+                <input type="text" id="description" name="description" required>
+
+                <label for="version">الإصدار:</label>
+                <input type="text" id="version" name="version" required>
+
+                <label for="author">المؤلف:</label>
+                <input type="text" id="author" name="author" required>
+            </div>
+
+            <div class="form-section">
+                <h3><i class="fas fa-cog"></i> معلومات إضافية</h3>
+                <label for="section">القسم:</label>
+                <input type="text" id="section" name="section" required>
+
+                <label for="iosVersions">إصدارات iOS المتوافقة:</label>
+                <input type="text" id="iosVersions" name="iosVersions" required>
+
+                <label for="folderName">اسم المجلد:</label>
+                <input type="text" id="folderName" name="folderName" required>
+
+                <label for="jsonFileName">اسم ملف JSON:</label>
+                <input type="text" id="jsonFileName" name="jsonFileName" value="depiction" required>
+            </div>
+
+            <button type="button" class="generate-btn" onclick="generateAndUpload()">
+                <i class="fas fa-code"></i> إنشاء وتحميل JSON
+            </button>
+        </form>
+
+        <div class="json-output">
+            <pre id="jsonOutput"></pre>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2023 Sileo Depiction Generator Pro | صمم خصيصاً لـ TweaksDev22</p>
+    </div>
+
+    <script>
+        // إنشاء أيقونات عشوائية تطفو في الخلفية
+        function createFloatingIcons() {
+            const iconsContainer = document.querySelector('.floating-icons');
+            const icons = ['fa-cube', 'fa-code', 'fa-mobile-alt', 'fa-paint-brush', 'fa-star', 'fa-bolt', 'fa-cloud', 'fa-gem', 'fa-lightbulb', 'fa-rocket'];
+            
+            for (let i = 0; i < 15; i++) {
+                const icon = document.createElement('i');
+                icon.className = 'fas ' + icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.top = Math.random() * 100 + '%';
+                icon.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                icon.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                icon.style.animationDelay = (Math.random() * 10) + 's';
+                iconsContainer.appendChild(icon);
+            }
+        }
+
+        // إضافة حقول ديناميكية للشاشات
+        function addScreenshotInput() {
+            const container = document.getElementById('screenshotUrls');
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <input type="text" class="screenshot-url" placeholder="رابط لقطة الشاشة" required>
+                <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        // إضافة حقول ديناميكية للروابط الاجتماعية
+        function addSocialInput() {
+            const container = document.getElementById('socialLinks');
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <select class="social-type">
+                    <option value="discord">Discord</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="snapchat">Snapchat</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="website">Website</option>
+                </select>
+                <input type="text" class="social-url" placeholder="رابط التواصل" required>
+                <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        // إزالة الحقول
+        function removeInput(btn) {
+            const group = btn.closest('.input-group');
+            if (document.querySelectorAll('.input-group').length > 1) {
+                group.remove();
+            }
+        }
+
+        // جلب المستودعات من GitHub
+        async function fetchRepositories() {
+            const token = document.getElementById('githubToken').value.trim();
+            if (!token) {
+                alert('يرجى إدخال رمز الوصول أولاً');
+                return;
+            }
+
+            const dropdown = document.getElementById('repoDropdown');
+            dropdown.innerHTML = '<div class="repo-item">جاري تحميل المستودعات...</div>';
+            dropdown.classList.add('show');
+
+            try {
+                const response = await fetch('https://api.github.com/user/repos?per_page=100', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (response.ok) {
+                    const repos = await response.json();
+                    dropdown.innerHTML = '';
+
+                    if (repos.length === 0) {
+                        dropdown.innerHTML = '<div class="repo-item">لا توجد مستودعات</div>';
+                        return;
+                    }
+
+                    repos.forEach(repo => {
+                        const repoItem = document.createElement('div');
+                        repoItem.className = 'repo-item';
+                        repoItem.textContent = repo.full_name;
+                        repoItem.onclick = () => {
+                            document.getElementById('githubRepo').value = repo.full_name;
+                            dropdown.classList.remove('show');
+                        };
+                        dropdown.appendChild(repoItem);
+                    });
+                } else {
+                    const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                    dropdown.innerHTML = `<div class="repo-item">فشل في جلب المستودعات: ${errorData.message || response.status}</div>`;
+                }
+            } catch (error) {
+                dropdown.innerHTML = `<div class="repo-item">حدث خطأ أثناء جلب المستودعات: ${error.message}</div>`;
+            }
+        }
+
+        // إظهار/إخفاء قائمة المستودعات
+        function toggleRepoDropdown() {
+            const token = document.getElementById('githubToken').value.trim();
+            const dropdown = document.getElementById('repoDropdown');
+            
+            if (!token) {
+                alert('يرجى إدخال رمز الوصول أولاً');
+                return;
+            }
+            
+            if (dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            } else {
+                fetchRepositories();
+            }
+        }
+
+        // إغلاق قائمة المستودعات عند النقر خارجها
+        document.addEventListener('click', function(event) {
+            const repoInput = document.getElementById('githubRepo');
+            const dropdown = document.getElementById('repoDropdown');
+            
+            if (!repoInput.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // توليد JSON وتحميله
+        async function generateAndUpload() {
+            // جمع القيم من الحقول الثابتة
+            const githubToken = document.getElementById('githubToken').value.trim();
+            const githubRepo = document.getElementById('githubRepo').value.trim();
+            const headerImage = document.getElementById('headerImage').value;
+            const description = document.getElementById('description').value;
+            const version = document.getElementById('version').value;
+            const author = document.getElementById('author').value;
+            const section = document.getElementById('section').value;
+            const iosVersions = document.getElementById('iosVersions').value;
+            const folderName = document.getElementById('folderName').value;
+            const jsonFileName = document.getElementById('jsonFileName').value;
+
+            // التحقق من الحقول المطلوبة
+            if (!githubToken || !githubRepo) {
+                alert('يرجى إدخال رمز الوصول واختيار مستودع');
+                return;
+            }
+
+            // جمع روابط الشاشات
+            const screenshotElements = document.querySelectorAll('.screenshot-url');
+            const screenshots = [];
+            screenshotElements.forEach(input => {
+                if (input.value.trim() !== '') {
+                    screenshots.push({
+                        "accessibilityText": "Screenshot",
+                        "url": input.value.trim()
+                    });
+                }
+            });
+
+            // جمع الروابط الاجتماعية
+            const socialElements = document.querySelectorAll('.input-group');
+            const socialButtons = [];
+            socialElements.forEach(group => {
+                const type = group.querySelector('.social-type').value;
+                const url = group.querySelector('.social-url').value;
+                
+                if (url.trim() !== '') {
+                    let buttonText = '';
+                    let tintColor = '#7289da';
+                    
+                    switch(type) {
+                        case 'discord':
+                            buttonText = 'انضم إلى ديسكوردنا!';
+                            tintColor = '#7289da';
+                            break;
+                        case 'telegram':
+                            buttonText = 'انضم إلى تيليجرامنا!';
+                            tintColor = '#0088cc';
+                            break;
+                        case 'snapchat':
+                            buttonText = 'تابعنا على سناب شات!';
+                            tintColor = '#fffc00';
+                            break;
+                        case 'twitter':
+                            buttonText = 'تابعنا على تويتر!';
+                            tintColor = '#1da1f2';
+                            break;
+                        case 'website':
+                            buttonText = 'زور موقعنا!';
+                            tintColor = '#007bff';
+                            break;
+                    }
+                    
+                    socialButtons.push({
+                        "class": "DepictionButtonView",
+                        "text": buttonText,
+                        "action": url.trim(),
+                        "openExternal": true,
+                        "tintColor": tintColor
+                    });
+                }
+            });
+
+            // بناء كائن JSON
+            const depictionJSON = {
+                "class": "DepictionTabView",
+                "minVersion": "0.4",
+                "headerImage": headerImage,
+                "tabs": [
+                    {
+                        "class": "DepictionStackView",
+                        "tabname": "Details",
+                        "views": [
+                            ...socialButtons,
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionScreenshotsView",
+                                "itemCornerRadius": 6,
+                                "itemSize": "[160, 346]",
+                                "screenshots": screenshots
+                            },
+                            {
+                                "class": "DepictionHeaderView",
+                                "title": "Description"
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionMarkdownView",
+                                "markdown": description,
+                                "useSpacing": true
+                            },
+                            {
+                                "class": "DepictionHeaderView",
+                                "title": "Package Info"
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Version",
+                                "text": version
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Author",
+                                "text": author
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Section",
+                                "text": section
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "iOS Versions",
+                                "text": iosVersions
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionSpacerView",
+                                "spacing": 10
+                            },
+                            {
+                                "class": "DepictionButtonView",
+                                "action": "https://tweaksdev22.github.io",
+                                "isLink": true,
+                                "yPadding": 4,
+                                "text": "TweaksDev22",
+                                "view": {
+                                    "class": "DepictionImageView",
+                                    "URL": "https://raw.githubusercontent.com/TweaksDev22/tweaksdev22.github.io/master/img/tweaksdev22.png",
+                                    "width": 80,
+                                    "height": 80,
+                                    "cornerRadius": 1,
+                                    "alignment": 1,
+                                    "accessibilityText": "TweaksDev22"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "class": "DepictionStackView",
+                        "tabname": "Changelog",
+                        "views": [
+                            {
+                                "class": "DepictionMarkdownView",
+                                "markdown": "- الإصدار الأولي!",
+                                "useSpacing": true
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionSpacerView",
+                                "spacing": 10
+                            },
+                            {
+                                "class": "DepictionButtonView",
+                                "action": "https://tweaksdev22.github.io",
+                                "isLink": true,
+                                "yPadding": 4,
+                                "text": "TweaksDev22",
+                                "view": {
+                                    "class": "DepictionImageView",
+                                    "URL": "https://raw.githubusercontent.com/TweaksDev22/tweaksdev22.github.io/master/img/tweaksdev22.png",
+                                    "width": 80,
+                                    "height": 80,
+                                    "cornerRadius": 1,
+                                    "alignment": 1,
+                                    "accessibilityText": "TweaksDev22"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // تحويل JSON إلى نص
+            const jsonOutput = JSON.stringify(depictionJSON, null, 4);
+
+            // عرض JSON الناتج
+            document.getElementById('jsonOutput').innerText = jsonOutput;
+
+            // رفع JSON إلى GitHub
+            try {
+                const apiUrl = `https://api.github.com/repos/${githubRepo}/contents/sileo-depiction/${folderName}/${jsonFileName}.json`;
+
+                // تحويل المحتوى إلى base64
+                const contentBase64 = btoa(unescape(encodeURIComponent(jsonOutput)));
+
+                const response = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubToken}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Add depiction JSON',
+                        content: contentBase64,
+                        branch: 'main'
+                    })
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    alert('تم إنشاء ملف JSON بنجاح ورفعه إلى GitHub!');
+                    console.log('File created:', responseData);
+                } else {
+                    console.error('GitHub API error:', responseData);
+                    alert(`فشل في رفع الملف إلى GitHub. الخطأ: ${responseData.message || response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`حدث خطأ: ${error.message}`);
+            }
+        }
+
+        // إنشاء الأيقونات العائمة عند تحميل الصفحة
+        window.onload = function() {
+            createFloatingIcons();
+            
+            // إضافة حدث النقر لحقل المستودع
+            document.getElementById('githubRepo').addEventListener('click', toggleRepoDropdown);
+        };
+    </script>
+</body>
+</html>
