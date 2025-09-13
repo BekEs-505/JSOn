@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sileo Depiction Generator Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --dark-color: #2d3436;
+            --light-color: #f7f7f7;
+            --success-color: #00b894;
+            --warning-color: #fdcb6e;
+            --danger-color: #d63031;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            --gradient: linear-gradient(120deg, #6c5ce7, #00cec9);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+            background: var(--gradient);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+        }
+
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--light-color);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-section h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+
+        .form-section h3 i {
+            margin-right: 10px;
+            font-size: 1.4rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            color: var(--text-dark);
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .dynamic-inputs {
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .input-group select {
+            padding: 14px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            background-color: white;
+            color: var(--text-dark);
+            font-size: 1rem;
+            min-width: 120px;
+        }
+
+        .btn-remove {
+            padding: 14px 16px;
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-remove:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-add {
+            padding: 12px 20px;
+            background: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-add i {
+            margin-right: 8px;
+        }
+
+        .btn-add:hover {
+            background: #00a085;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4);
+        }
+
+        button.generate-btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 15px;
+            background: var(--gradient);
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
+            width: 100%;
+            max-width: 350px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        button.generate-btn i {
+            margin-right: 10px;
+        }
+
+        button.generate-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.4);
+        }
+
+        button.generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .json-output {
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--dark-color);
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            color: var(--light-color);
+            font-family: 'Consolas', monospace;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            color: white;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: span 1;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .input-group input {
+                width: 100%;
+            }
+            
+            .input-group select,
+            .btn-remove {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-circle">
+            <i class="fas fa-cubes"></i>
+        </div>
+        <h1>Sileo Depiction Generator Pro</h1>
+        <p class="subtitle">Create professional Sileo depictions with ease</p>
+    </div>
+
+    <div class="container">
+        <form id="depictionForm">
+            <div class="form-grid">
+                <div class="form-section full-width">
+                    <h3><i class="fas fa-image"></i> Media</h3>
+                    <label for="headerImage">Header Image URL:</label>
+                    <input type="text" id="headerImage" name="headerImage" required>
+                    
+                    <label>Screenshot URLs:</label>
+                    <div class="dynamic-inputs" id="screenshotUrls">
+                        <div class="input-group">
+                            <input type="text" class="screenshot-url" placeholder="Screenshot URL" required>
+                            <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add" onclick="addScreenshotInput()">
+                        <i class="fas fa-plus"></i> Add Screenshot URL
+                    </button>
+                </div>
+
+                <div class="form-section full-width">
+                    <h3><i class="fas fa-link"></i> Social Links</h3>
+                    <div class="dynamic-inputs" id="socialLinks">
+                        <div class="input-group">
+                            <select class="social-type">
+                                <option value="discord">Discord</option>
+                                <option value="telegram">Telegram</option>
+                                <option value="snapchat">Snapchat</option>
+                                <option value="twitter">Twitter</option>
+                                <option value="website">Website</option>
+                            </select>
+                            <input type="text" class="social-url" placeholder="Social URL" required>
+                            <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-add" onclick="addSocialInput()">
+                        <i class="fas fa-plus"></i> Add Social Link
+                    </button>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-info-circle"></i> Basic Info</h3>
+                    <label for="description">Description:</label>
+                    <input type="text" id="description" name="description" required>
+
+                    <label for="version">Version:</label>
+                    <input type="text" id="version" name="version" required>
+
+                    <label for="author">Author:</label>
+                    <input type="text" id="author" name="author" required>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-cog"></i> Additional Info</h3>
+                    <label for="section">Section:</label>
+                    <input type="text" id="section" name="section" required>
+
+                    <label for="iosVersions">iOS Versions:</label>
+                    <input type="text" id="iosVersions" name="iosVersions" required>
+
+                    <label for="folderName">Folder Name:</label>
+                    <input type="text" id="folderName" name="folderName" required>
+
+                    <label for="jsonFileName">JSON File Name:</label>
+                    <input type="text" id="jsonFileName" name="jsonFileName" value="depiction" required>
+                </div>
+            </div>
+
+            <button type="button" class="generate-btn" onclick="generateAndUpload()">
+                <i class="fas fa-code"></i> Generate and Upload JSON
+            </button>
+        </form>
+
+        <div class="json-output">
+            <pre id="jsonOutput"></pre>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>© 2023 Sileo Depiction Generator Pro | Designed for TweaksDev22</p>
+    </div>
+
+    <script>
+        // إضافة حقول ديناميكية للشاشات
+        function addScreenshotInput() {
+            const container = document.getElementById('screenshotUrls');
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <input type="text" class="screenshot-url" placeholder="Screenshot URL" required>
+                <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        // إضافة حقول ديناميكية للروابط الاجتماعية
+        function addSocialInput() {
+            const container = document.getElementById('socialLinks');
+            const div = document.createElement('div');
+            div.className = 'input-group';
+            div.innerHTML = `
+                <select class="social-type">
+                    <option value="discord">Discord</option>
+                    <option value="telegram">Telegram</option>
+                    <option value="snapchat">Snapchat</option>
+                    <option value="twitter">Twitter</option>
+                    <option value="website">Website</option>
+                </select>
+                <input type="text" class="social-url" placeholder="Social URL" required>
+                <button type="button" class="btn-remove" onclick="removeInput(this)"><i class="fas fa-times"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        // إزالة الحقول
+        function removeInput(btn) {
+            const group = btn.closest('.input-group');
+            if (document.querySelectorAll('.input-group').length > 1) {
+                group.remove();
+            }
+        }
+
+        // توليد JSON وتحميله
+        async function generateAndUpload() {
+            // جمع القيم من الحقول الثابتة
+            const headerImage = document.getElementById('headerImage').value;
+            const description = document.getElementById('description').value;
+            const version = document.getElementById('version').value;
+            const author = document.getElementById('author').value;
+            const section = document.getElementById('section').value;
+            const iosVersions = document.getElementById('iosVersions').value;
+            const folderName = document.getElementById('folderName').value;
+            const jsonFileName = document.getElementById('jsonFileName').value;
+
+            // جمع روابط الشاشات
+            const screenshotElements = document.querySelectorAll('.screenshot-url');
+            const screenshots = [];
+            screenshotElements.forEach(input => {
+                if (input.value.trim() !== '') {
+                    screenshots.push({
+                        "accessibilityText": "Screenshot",
+                        "url": input.value.trim()
+                    });
+                }
+            });
+
+            // جمع الروابط الاجتماعية
+            const socialElements = document.querySelectorAll('.input-group');
+            const socialButtons = [];
+            socialElements.forEach(group => {
+                const type = group.querySelector('.social-type').value;
+                const url = group.querySelector('.social-url').value;
+                
+                if (url.trim() !== '') {
+                    let buttonText = '';
+                    let tintColor = '#7289da'; // Default Discord color
+                    
+                    switch(type) {
+                        case 'discord':
+                            buttonText = 'Join Our Discord!';
+                            tintColor = '#7289da';
+                            break;
+                        case 'telegram':
+                            buttonText = 'Join Our Telegram!';
+                            tintColor = '#0088cc';
+                            break;
+                        case 'snapchat':
+                            buttonText = 'Follow Us on Snapchat!';
+                            tintColor = '#fffc00';
+                            break;
+                        case 'twitter':
+                            buttonText = 'Follow Us on Twitter!';
+                            tintColor = '#1da1f2';
+                            break;
+                        case 'website':
+                            buttonText = 'Visit Our Website!';
+                            tintColor = '#007bff';
+                            break;
+                    }
+                    
+                    socialButtons.push({
+                        "class": "DepictionButtonView",
+                        "text": buttonText,
+                        "action": url.trim(),
+                        "openExternal": true,
+                        "tintColor": tintColor
+                    });
+                }
+            });
+
+            // بناء كائن JSON
+            const depictionJSON = {
+                "class": "DepictionTabView",
+                "minVersion": "0.4",
+                "headerImage": headerImage,
+                "tabs": [
+                    {
+                        "class": "DepictionStackView",
+                        "tabname": "Details",
+                        "views": [
+                            ...socialButtons,
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionScreenshotsView",
+                                "itemCornerRadius": 6,
+                                "itemSize": "[160, 346]",
+                                "screenshots": screenshots
+                            },
+                            {
+                                "class": "DepictionHeaderView",
+                                "title": "Description"
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionMarkdownView",
+                                "markdown": description,
+                                "useSpacing": true
+                            },
+                            {
+                                "class": "DepictionHeaderView",
+                                "title": "Package Info"
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Version",
+                                "text": version
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Author",
+                                "text": author
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Section",
+                                "text": section
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "iOS Versions",
+                                "text": iosVersions
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionSpacerView",
+                                "spacing": 10
+                            },
+                            {
+                                "class": "DepictionButtonView",
+                                "action": "https://tweaksdev22.github.io",
+                                "isLink": true,
+                                "yPadding": 4,
+                                "text": "TweaksDev22",
+                                "view": {
+                                    "class": "DepictionImageView",
+                                    "URL": "https://raw.githubusercontent.com/TweaksDev22/tweaksdev22.github.io/master/img/tweaksdev22.png",
+                                    "width": 80,
+                                    "height": 80,
+                                    "cornerRadius": 1,
+                                    "alignment": 1,
+                                    "accessibilityText": "TweaksDev22"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "class": "DepictionStackView",
+                        "tabname": "Changelog",
+                        "views": [
+                            {
+                                "class": "DepictionMarkdownView",
+                                "markdown": "- Initial release!",
+                                "useSpacing": true
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionSpacerView",
+                                "spacing": 10
+                            },
+                            {
+                                "class": "DepictionButtonView",
+                                "action": "https://tweaksdev22.github.io",
+                                "isLink": true,
+                                "yPadding": 4,
+                                "text": "TweaksDev22",
+                                "view": {
+                                    "class": "DepictionImageView",
+                                    "URL": "https://raw.githubusercontent.com/TweaksDev22/tweaksdev22.github.io/master/img/tweaksdev22.png",
+                                    "width": 80,
+                                    "height": 80,
+                                    "cornerRadius": 1,
+                                    "alignment": 1,
+                                    "accessibilityText": "TweaksDev22"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // تحويل JSON إلى نص
+            const jsonOutput = JSON.stringify(depictionJSON, null, 4);
+
+            // عرض JSON الناتج
+            document.getElementById('jsonOutput').innerText = jsonOutput;
+
+            // رفع JSON إلى GitHub (يجب استبدال التوكن الخاص بك)
+            const accessToken = 'YOUR_PERSONAL_ACCESS_TOKEN'; // استبدل هذا بالتوكن الخاص بك
+            
+            if (accessToken !== 'YOUR_PERSONAL_ACCESS_TOKEN') {
+                const apiUrl = `https://api.github.com/repos/TweaksDev22/tweaksdev22.github.io/contents/sileo-depiction/${folderName}/${jsonFileName}.json`;
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `token ${accessToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            message: 'Add depiction JSON',
+                            content: btoa(unescape(encodeURIComponent(jsonOutput))),
+                            branch: 'main'
+                        })
+                    });
+
+                    if (response.ok) {
+                        alert('Depiction JSON file created successfully!');
+                    } else {
+                        const responseData = await response.json();
+                        alert(`Failed to create depiction JSON file. Error: ${responseData.message}`);
+                    }
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                }
+            } else {
+                alert('Note: GitHub upload is disabled. Please set your access token to enable upload functionality.');
+            }
+        }
+    </script>
+</body>
+</html>
