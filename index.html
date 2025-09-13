@@ -1002,6 +1002,9 @@
                 console.log('File does not exist, creating new one');
             }
 
+            // تحويل المحتوى إلى base64
+            const contentBase64 = btoa(unescape(encodeURIComponent(content)));
+
             const response = await fetch(apiUrl, {
                 method: 'PUT',
                 headers: {
@@ -1011,13 +1014,14 @@
                 },
                 body: JSON.stringify({
                     message: message,
-                    content: btoa(unescape(encodeURIComponent(content))),
+                    content: contentBase64,
                     branch: 'main',
                     ...(sha && { sha }) // إضافة SHA إذا كان الملف موجوداً لتحديثه
                 })
             });
 
-            return response;
+            const responseData = await response.json();
+            return { ok: response.ok, data: responseData };
         }
 
         // إنشاء ملف سير العمل GitHub Actions
@@ -1057,7 +1061,7 @@ jobs:
         uses: actions/deploy-pages@v1
 `;
 
-            const response = await uploadFileToGitHub(
+            const result = await uploadFileToGitHub(
                 token, 
                 repo, 
                 '.github/workflows/deploy.yml', 
@@ -1065,7 +1069,7 @@ jobs:
                 'Add GitHub Pages deployment workflow'
             );
 
-            return response;
+            return result;
         }
 
         // توليد JSON وتحميله
@@ -1279,11 +1283,10 @@ jobs:
                 updateProgress(30, 'جاري إنشاء سير العمل...');
                 
                 // إنشاء ملف سير العمل
-                const workflowResponse = await createGitHubWorkflow(githubToken, githubRepo);
+                const workflowResult = await createGitHubWorkflow(githubToken, githubRepo);
                 
-                if (!workflowResponse.ok) {
-                    const workflowError = await workflowResponse.json().catch(() => ({ message: 'Unknown error' }));
-                    console.warn('فشل في إنشاء سير العمل:', workflowError);
+                if (!workflowResult.ok) {
+                    console.warn('فشل في إنشاء سير العمل:', workflowResult.data);
                     // نستمر رغم فشل إنشاء سير العمل، لأنه قد يكون موجوداً مسبقاً
                 }
 
@@ -1291,7 +1294,7 @@ jobs:
 
                 // رفع ملف JSON
                 const jsonPath = `sileo-depiction/${folderName}/${jsonFileName}.json`;
-                const jsonResponse = await uploadFileToGitHub(
+                const jsonResult = await uploadFileToGitHub(
                     githubToken,
                     githubRepo,
                     jsonPath,
@@ -1299,21 +1302,19 @@ jobs:
                     `Add ${jsonFileName}.json depiction file`
                 );
 
-                const jsonResponseData = await jsonResponse.json();
-
-                if (jsonResponse.ok) {
+                if (jsonResult.ok) {
                     updateProgress(100, 'تم النشر بنجاح!');
                     
                     // عرض رابط الملف إذا كان متاحاً
-                    if (jsonResponseData.content && jsonResponseData.content.html_url) {
+                    if (jsonResult.data.content && jsonResult.data.content.html_url) {
                         const preElement = document.getElementById('jsonOutput');
-                        preElement.innerHTML += `\n\n\n# رابط الملف على GitHub:\n# ${jsonResponseData.content.html_url}`;
+                        preElement.innerHTML += `\n\n\n# رابط الملف على GitHub:\n# ${jsonResult.data.content.html_url}`;
                     }
                     
                     alert('تم إنشاء ملف JSON ورفعه إلى GitHub بنجاح! تم إنشاء سير العمل أيضًا.');
                 } else {
-                    console.error('GitHub API error:', jsonResponseData);
-                    alert(`فشل في رفع الملف إلى GitHub. الخطأ: ${jsonResponseData.message || jsonResponse.status}`);
+                    console.error('GitHub API error:', jsonResult.data);
+                    alert(`فشل في رفع الملف إلى GitHub. الخطأ: ${jsonResult.data.message || 'Unknown error'}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
