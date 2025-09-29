@@ -21,8 +21,10 @@
             --success: #00b894;
             --warning: #fdcb6e;
             --danger: #d63031;
+            --card-bg: rgba(30, 30, 30, 0.9);
             --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             --gradient: linear-gradient(135deg, #6c5ce7, #00cec9, #fd79a8);
+            --gradient-alt: linear-gradient(135deg, #fd79a8, #6c5ce7, #00cec9);
         }
 
         * {
@@ -46,6 +48,28 @@
             overflow-x: hidden;
         }
 
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .floating-icons i {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 2rem;
+            animation: float 10s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -58,6 +82,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
         }
 
         .header::before {
@@ -68,6 +93,11 @@
             width: 100%;
             height: 4px;
             background: var(--gradient);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .logo-circle {
@@ -98,6 +128,7 @@
             color: var(--text-dark);
             font-size: 2.5rem;
             font-weight: 800;
+            letter-spacing: 1px;
         }
 
         .subtitle {
@@ -105,6 +136,7 @@
             color: var(--text-light);
             margin-bottom: 20px;
             font-size: 1.2rem;
+            font-weight: 500;
             opacity: 0.8;
         }
 
@@ -117,6 +149,18 @@
             box-shadow: var(--shadow);
             margin-bottom: 40px;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
         }
 
         .form-section {
@@ -124,7 +168,30 @@
             padding: 20px;
             background: var(--dark);
             border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
             border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .form-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--gradient);
+        }
+
+        .full-width {
+            grid-column: span 2;
         }
 
         .form-section h3 {
@@ -148,6 +215,7 @@
             margin-bottom: 8px;
             font-weight: 600;
             color: var(--text-dark);
+            font-size: 1rem;
         }
 
         input[type="text"], input[type="password"], select {
@@ -158,6 +226,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             background-color: var(--light);
             color: var(--text-light);
+            transition: all 0.3s;
             font-size: 1rem;
             font-family: 'Tajawal', sans-serif;
         }
@@ -166,6 +235,11 @@
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .dynamic-inputs {
+            margin-bottom: 16px;
         }
 
         .input-group {
@@ -180,6 +254,18 @@
             margin-bottom: 0;
         }
 
+        .input-group select {
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: var(--light);
+            color: var(--text-light);
+            font-size: 1rem;
+            min-width: 120px;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 500;
+        }
+
         .btn-remove {
             padding: 14px 16px;
             background: var(--danger);
@@ -187,10 +273,17 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
+        }
+
+        .btn-remove:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
         }
 
         .btn-add {
@@ -200,17 +293,25 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
             font-weight: 600;
             margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
         }
 
         .btn-add i {
             margin-left: 8px;
         }
 
-        .auto-upload-btn {
+        .btn-add:hover {
+            background: #00a085;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.4);
+        }
+
+        button.generate-btn {
             padding: 18px 30px;
             border: none;
             border-radius: 12px;
@@ -224,18 +325,111 @@
             justify-content: center;
             margin: 35px auto;
             width: 100%;
-            max-width: 400px;
+            max-width: 350px;
             transition: all 0.3s;
             box-shadow: 0 10px 20px rgba(108, 92, 231, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .auto-upload-btn:hover {
-            transform: translateY(-2px);
+        button.generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-alt);
+            z-index: -1;
+            transition: opacity 0.3s;
+            opacity: 0;
+        }
+
+        button.generate-btn:hover::before {
+            opacity: 1;
+        }
+
+        button.generate-btn i {
+            margin-left: 10px;
+        }
+
+        button.generate-btn:hover {
+            transform: translateY(-4px) scale(1.02);
             box-shadow: 0 15px 30px rgba(108, 92, 231, 0.5);
         }
 
-        .auto-upload-btn i {
-            margin-left: 10px;
+        button.generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .json-output {
+            margin-top: 35px;
+            padding: 25px;
+            background: var(--dark);
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        pre {
+            white-space: pre-wrap;
+            color: var(--text-light);
+            font-family: 'Consolas', monospace;
+            line-height: 1.5;
+            font-size: 0.9rem;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 1000px;
+            opacity: 0.7;
+        }
+
+        .info-tooltip {
+            display: inline-block;
+            margin-right: 6px;
+            color: var(--primary);
+            cursor: help;
+            position: relative;
+        }
+
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 220px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: normal;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .repo-selector {
+            position: relative;
+            margin-bottom: 16px;
         }
 
         .progress-container {
@@ -271,7 +465,7 @@
             padding: 10px;
             background: var(--dark);
             border-radius: 5px;
-            max-height: 150px;
+            max-height: 100px;
             overflow-y: auto;
             font-family: monospace;
             font-size: 0.8rem;
@@ -291,22 +485,111 @@
             color: var(--danger);
         }
 
+        .log-warning {
+            color: var(--warning);
+        }
+
         .log-info {
             color: var(--accent);
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            width: 100%;
-            max-width: 1000px;
-            opacity: 0.7;
+        .json-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
+        .json-actions button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .json-actions button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .json-actions button.copy-btn {
+            background: var(--success);
+        }
+
+        .json-actions button.copy-btn:hover {
+            background: #00a085;
+        }
+
+        .json-actions button.download-btn {
+            background: var(--accent);
+        }
+
+        .json-actions button.download-btn:hover {
+            background: #009688;
+        }
+
+        .json-actions button.auto-upload-btn {
+            background: var(--secondary);
+        }
+
+        .json-actions button.auto-upload-btn:hover {
+            background: #e84393;
+        }
+
+        .packages-list {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--dark);
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .package-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .package-item:hover {
+            background: var(--primary);
+        }
+
+        .package-item:last-child {
+            border-bottom: none;
+        }
+
+        /* إنشاء أيقونات عشوائية تطفو في الخلفية */
+        .floating-icons i:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; animation-duration: 15s; }
+        .floating-icons i:nth-child(2) { top: 20%; left: 80%; animation-delay: 2s; animation-duration: 12s; }
+        .floating-icons i:nth-child(3) { top: 60%; left: 10%; animation-delay: 4s; animation-duration: 18s; }
+        .floating-icons i:nth-child(4) { top: 40%; left: 90%; animation-delay: 6s; animation-duration: 14s; }
+        .floating-icons i:nth-child(5) { top: 80%; left: 70%; animation-delay: 8s; animation-duration: 16s; }
+        .floating-icons i:nth-child(6) { top: 30%; left: 30%; animation-delay: 10s; animation-duration: 13s; }
+        .floating-icons i:nth-child(7) { top: 70%; left: 40%; animation-delay: 12s; animation-duration: 17s; }
+
         @media (max-width: 900px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .full-width {
+                grid-column: span 1;
+            }
+            
             .container {
                 padding: 20px;
             }
@@ -319,7 +602,12 @@
                 flex-direction: column;
             }
             
-            .input-group input, .input-group select, .btn-remove {
+            .input-group input {
+                width: 100%;
+            }
+            
+            .input-group select,
+            .btn-remove {
                 width: 100%;
             }
             
@@ -328,30 +616,71 @@
                 height: 70px;
                 font-size: 1.8rem;
             }
+
+            .json-actions {
+                flex-direction: column;
+            }
+
+            .json-actions button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="floating-icons">
+        <i class="fas fa-cube"></i>
+        <i class="fas fa-code"></i>
+        <i class="fas fa-mobile-alt"></i>
+        <i class="fas fa-paint-brush"></i>
+        <i class="fas fa-star"></i>
+        <i class="fas fa-bolt"></i>
+        <i class="fas fa-cloud"></i>
+    </div>
+
     <div class="header">
         <div class="logo-circle">
             <i class="fas fa-cubes"></i>
         </div>
         <h1>Sileo Depiction Generator Pro</h1>
-        <p class="subtitle">أنشئ ورفع ملفات JSON تلقائياً إلى GitHub</p>
+        <p class="subtitle">أنشئ وصف Sileo احترافي بميزات متقدمة</p>
     </div>
 
     <div class="container">
         <form id="depictionForm">
-            <div class="form-section">
+            <div class="form-section full-width">
                 <h3><i class="fas fa-key"></i> إعدادات GitHub</h3>
-                <label for="githubToken">GitHub Token:</label>
+                <label for="githubToken">
+                    <span class="info-tooltip">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="tooltip-text">رمز الوصول الشخصي من GitHub (Personal Access Token) للوصول إلى المستودع</span>
+                    </span>
+                    GitHub Token:
+                </label>
                 <input type="password" id="githubToken" name="githubToken" placeholder="أدخل رمز الوصول الشخصي من GitHub" required>
                 
-                <label for="githubRepo">GitHub Repository:</label>
-                <input type="text" id="githubRepo" name="githubRepo" placeholder="مثال: TweaksDev22/myrepo" required>
+                <div class="repo-selector">
+                    <label for="githubRepo">
+                        <span class="info-tooltip">
+                            <i class="fas fa-question-circle"></i>
+                            <span class="tooltip-text">اكتب اسم المستودع بالشكل: مالك/اسم-المستودع</span>
+                        </span>
+                        GitHub Repository:
+                    </label>
+                    <input type="text" id="githubRepo" name="githubRepo" placeholder="مثال: TweaksDev22/myrepo" required>
+                </div>
+
+                <button type="button" class="btn-add" onclick="fetchPackages()" style="margin-top: 10px;">
+                    <i class="fas fa-sync-alt"></i> جلب الحزم من المستودع
+                </button>
+
+                <div class="packages-list" id="packagesList" style="display: none;">
+                    <h4>الحزم الموجودة في المستودع:</h4>
+                    <div id="packagesContainer"></div>
+                </div>
             </div>
 
-            <div class="form-section">
+            <div class="form-section full-width">
                 <h3><i class="fas fa-cube"></i> معلومات الحزمة</h3>
                 <label for="packageName">اسم الحزمة (Package Name):</label>
                 <input type="text" id="packageName" name="packageName" placeholder="مثال: com.tweaksdev22.mytweak" required>
@@ -360,10 +689,10 @@
                 <input type="text" id="packageDisplayName" name="packageDisplayName" placeholder="اسم الحزمة كما يظهر في Sileo" required>
             </div>
 
-            <div class="form-section">
+            <div class="form-section full-width">
                 <h3><i class="fas fa-image"></i> الوسائط</h3>
                 <label for="headerImage">رابط صورة العنوان:</label>
-                <input type="text" id="headerImage" name="headerImage" placeholder="https://example.com/header.jpg" required>
+                <input type="text" id="headerImage" name="headerImage" required>
                 
                 <label>روابط لقطات الشاشة:</label>
                 <div class="dynamic-inputs" id="screenshotUrls">
@@ -377,13 +706,14 @@
                 </button>
             </div>
 
-            <div class="form-section">
+            <div class="form-section full-width">
                 <h3><i class="fas fa-link"></i> روابط التواصل</h3>
                 <div class="dynamic-inputs" id="socialLinks">
                     <div class="input-group">
                         <select class="social-type">
                             <option value="discord">Discord</option>
                             <option value="telegram">Telegram</option>
+                            <option value="snapchat">Snapchat</option>
                             <option value="twitter">Twitter</option>
                             <option value="website">Website</option>
                         </select>
@@ -399,13 +729,13 @@
             <div class="form-section">
                 <h3><i class="fas fa-info-circle"></i> المعلومات الأساسية</h3>
                 <label for="description">الوصف:</label>
-                <input type="text" id="description" name="description" placeholder="وصف الحزمة..." required>
+                <input type="text" id="description" name="description" required>
 
                 <label for="version">الإصدار:</label>
-                <input type="text" id="version" name="version" placeholder="1.0.0" required>
+                <input type="text" id="version" name="version" required>
 
                 <label for="author">المؤلف:</label>
-                <input type="text" id="author" name="author" placeholder="TweaksDev22" required>
+                <input type="text" id="author" name="author" required>
             </div>
 
             <div class="form-section">
@@ -416,14 +746,22 @@
                     <option value="Themes">Themes</option>
                     <option value="Apps">Apps</option>
                     <option value="Utilities">Utilities</option>
+                    <option value="Development">Development</option>
+                    <option value="System">System</option>
                 </select>
 
                 <label for="iosVersions">إصدارات iOS المتوافقة:</label>
-                <input type="text" id="iosVersions" name="iosVersions" placeholder="iOS 14.0 - 16.5" required>
+                <input type="text" id="iosVersions" name="iosVersions" placeholder="مثال: iOS 14.0 - 16.5" required>
+
+                <label for="price">السعر:</label>
+                <select id="price" name="price">
+                    <option value="Free">مجاني</option>
+                    <option value="Paid">مدفوع</option>
+                </select>
             </div>
 
-            <button type="button" class="auto-upload-btn" onclick="autoUploadJSON()">
-                <i class="fas fa-cloud-upload-alt"></i> رفع تلقائي إلى GitHub
+            <button type="button" class="generate-btn" onclick="generateAndUploadForAllPackages()">
+                <i class="fas fa-code"></i> إنشاء وتحميل JSON لجميع الحزم
             </button>
         </form>
 
@@ -434,6 +772,22 @@
             <div class="progress-text" id="progressText">جاري البدء في عملية النشر...</div>
             <div class="status-log" id="statusLog"></div>
         </div>
+
+        <div class="json-output">
+            <pre id="jsonOutput">سيظهر محتوى JSON هنا بعد الإنشاء</pre>
+        </div>
+
+        <div class="json-actions">
+            <button class="copy-btn" onclick="copyJsonToClipboard()">
+                <i class="fas fa-copy"></i> نسخ JSON
+            </button>
+            <button class="download-btn" onclick="downloadJsonFile()">
+                <i class="fas fa-download"></i> حفظ كملف JSON
+            </button>
+            <button class="auto-upload-btn" onclick="setupAutoUpload()">
+                <i class="fas fa-cloud-upload-alt"></i> تفعيل الرفع التلقائي
+            </button>
+        </div>
     </div>
 
     <div class="footer">
@@ -441,6 +795,23 @@
     </div>
 
     <script>
+        // إنشاء أيقونات عشوائية تطفو في الخلفية
+        function createFloatingIcons() {
+            const iconsContainer = document.querySelector('.floating-icons');
+            const icons = ['fa-cube', 'fa-code', 'fa-mobile-alt', 'fa-paint-brush', 'fa-star', 'fa-bolt', 'fa-cloud', 'fa-gem', 'fa-lightbulb', 'fa-rocket'];
+            
+            for (let i = 0; i < 15; i++) {
+                const icon = document.createElement('i');
+                icon.className = 'fas ' + icons[Math.floor(Math.random() * icons.length)];
+                icon.style.left = Math.random() * 100 + '%';
+                icon.style.top = Math.random() * 100 + '%';
+                icon.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                icon.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                icon.style.animationDelay = (Math.random() * 10) + 's';
+                iconsContainer.appendChild(icon);
+            }
+        }
+
         // إضافة رسالة إلى سجل الحالة
         function addLogMessage(message, type = 'info') {
             const logContainer = document.getElementById('statusLog');
@@ -451,17 +822,82 @@
             logContainer.scrollTop = logContainer.scrollHeight;
         }
 
-        // تحديث شريط التقدم
-        function updateProgress(percentage, text) {
-            const progressFill = document.getElementById('progressFill');
-            const progressText = document.getElementById('progressText');
+        // جلب الحزم من المستودع
+        async function fetchPackages() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
             
-            progressFill.style.width = percentage + '%';
-            progressText.textContent = text;
-            
-            if (percentage > 0) {
-                document.getElementById('progressContainer').style.display = 'block';
+            if (!token || !repo) {
+                alert('يرجى إدخال رمز الوصول واسم المستودع أولاً');
+                return;
             }
+
+            try {
+                addLogMessage('جاري جلب الحزم من المستودع...', 'info');
+                
+                // محاولة جلب الحزم من مجلد debs أو packages
+                const responses = await Promise.allSettled([
+                    fetch(`https://api.github.com/repos/${repo}/contents/debs`),
+                    fetch(`https://api.github.com/repos/${repo}/contents/packages`),
+                    fetch(`https://api.github.com/repos/${repo}/contents`)
+                ]);
+
+                let packages = [];
+                
+                for (const response of responses) {
+                    if (response.status === 'fulfilled' && response.value.ok) {
+                        const data = await response.value.json();
+                        const debFiles = data.filter(item => 
+                            item.name.endsWith('.deb') || 
+                            item.type === 'dir' && !['.github', 'depiction'].includes(item.name)
+                        );
+                        
+                        packages = [...packages, ...debFiles];
+                    }
+                }
+
+                // إزالة التكرارات
+                packages = packages.filter((item, index, self) => 
+                    index === self.findIndex(t => t.name === item.name)
+                );
+
+                displayPackages(packages);
+                
+            } catch (error) {
+                console.error('Error fetching packages:', error);
+                addLogMessage(`فشل في جلب الحزم: ${error.message}`, 'error');
+            }
+        }
+
+        // عرض الحزم في القائمة
+        function displayPackages(packages) {
+            const container = document.getElementById('packagesContainer');
+            const list = document.getElementById('packagesList');
+            
+            container.innerHTML = '';
+            
+            if (packages.length === 0) {
+                container.innerHTML = '<p>لا توجد حزم DEB في المستودع</p>';
+                list.style.display = 'block';
+                return;
+            }
+
+            packages.forEach(pkg => {
+                const item = document.createElement('div');
+                item.className = 'package-item';
+                item.innerHTML = `
+                    <strong>${pkg.name}</strong>
+                    ${pkg.type === 'dir' ? ' (مجلد)' : ' (ملف DEB)'}
+                `;
+                item.onclick = () => {
+                    document.getElementById('packageName').value = pkg.name.replace('.deb', '');
+                    document.getElementById('packageDisplayName').value = pkg.name.replace('.deb', '').split('.').pop();
+                };
+                container.appendChild(item);
+            });
+            
+            list.style.display = 'block';
+            addLogMessage(`تم العثور على ${packages.length} حزمة`, 'success');
         }
 
         // إضافة حقول ديناميكية للشاشات
@@ -485,6 +921,7 @@
                 <select class="social-type">
                     <option value="discord">Discord</option>
                     <option value="telegram">Telegram</option>
+                    <option value="snapchat">Snapchat</option>
                     <option value="twitter">Twitter</option>
                     <option value="website">Website</option>
                 </select>
@@ -499,6 +936,19 @@
             const group = btn.closest('.input-group');
             if (document.querySelectorAll('.input-group').length > 1) {
                 group.remove();
+            }
+        }
+
+        // تحديث شريط التقدم
+        function updateProgress(percentage, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = text;
+            
+            if (percentage > 0) {
+                document.getElementById('progressContainer').style.display = 'block';
             }
         }
 
@@ -562,14 +1012,16 @@
             }
         }
 
-        // إنشاء ملف سير العمل GitHub Actions
-        async function createGitHubWorkflow(token, repo) {
+        // إنشاء أو تعديل ملف سير العمل GitHub Actions
+        async function createOrUpdateGitHubWorkflow(token, repo) {
             const workflowContent = `name: 🚀 Deploy Sileo Depiction to GitHub Pages
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: write
@@ -577,14 +1029,24 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  validate-and-deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: \${{ steps.deployment.outputs.page_url }}
+
     steps:
       - name: ⬇️ Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 📁 Validate JSON files
+        run: |
+          find ./depiction -name "*.json" -print0 | while IFS= read -r -d $'\\0' file; do
+            echo "Validating \$file..."
+            jq . "\$file" > /dev/null || exit 1
+          done
 
       - name: 🛠️ Setup Pages
         uses: actions/configure-pages@v3
@@ -604,13 +1066,13 @@ jobs:
                 repo, 
                 '.github/workflows/deploy.yml', 
                 workflowContent,
-                'Add GitHub Pages deployment workflow'
+                'Add or update GitHub Pages deployment workflow'
             );
 
             return result;
         }
 
-        // توليد JSON للحزمة
+        // توليد JSON للحزمة الحالية
         function generatePackageJSON() {
             const packageName = document.getElementById('packageName').value;
             const packageDisplayName = document.getElementById('packageDisplayName').value;
@@ -620,6 +1082,7 @@ jobs:
             const author = document.getElementById('author').value;
             const section = document.getElementById('section').value;
             const iosVersions = document.getElementById('iosVersions').value;
+            const price = document.getElementById('price').value;
 
             // جمع روابط الشاشات
             const screenshotElements = document.querySelectorAll('.screenshot-url');
@@ -652,6 +1115,10 @@ jobs:
                         case 'telegram':
                             buttonText = 'انضم إلى تيليجرامنا!';
                             tintColor = '#0088cc';
+                            break;
+                        case 'snapchat':
+                            buttonText = 'تابعنا على سناب شات!';
+                            tintColor = '#fffc00';
                             break;
                         case 'twitter':
                             buttonText = 'تابعنا على تويتر!';
@@ -731,6 +1198,18 @@ jobs:
                                 "class": "DepictionTableTextView",
                                 "title": "iOS Versions",
                                 "text": iosVersions
+                            },
+                            {
+                                "class": "DepictionTableTextView",
+                                "title": "Price",
+                                "text": price === 'Free' ? 'مجاني' : 'مدفوع'
+                            },
+                            {
+                                "class": "DepictionSeparatorView"
+                            },
+                            {
+                                "class": "DepictionSpacerView",
+                                "spacing": 10
                             }
                         ]
                     }
@@ -744,8 +1223,8 @@ jobs:
             };
         }
 
-        // الرفع التلقائي الرئيسي
-        async function autoUploadJSON() {
+        // إنشاء وتحميل JSON لجميع الحزم
+        async function generateAndUploadForAllPackages() {
             const token = document.getElementById('githubToken').value.trim();
             const repo = document.getElementById('githubRepo').value.trim();
             
@@ -754,54 +1233,27 @@ jobs:
                 return;
             }
 
-            // التحقق من الحقول المطلوبة
-            const requiredFields = ['packageName', 'packageDisplayName', 'headerImage', 'description', 'version', 'author', 'section', 'iosVersions'];
-            for (const fieldId of requiredFields) {
-                const field = document.getElementById(fieldId);
-                if (!field.value.trim()) {
-                    alert(`يرجى ملء حقل ${field.previousElementSibling.textContent}`);
-                    field.focus();
-                    return;
-                }
-            }
-
             // مسح سجل الحالة السابق
             document.getElementById('statusLog').innerHTML = '';
-            updateProgress(10, 'جاري التحضير...');
-            addLogMessage('بدء عملية الرفع التلقائي', 'info');
+            updateProgress(10, 'جاري إنشاء ملفات JSON...');
 
             try {
-                // الخطوة 1: إنشاء مجلد depiction
-                updateProgress(20, 'جاري إنشاء مجلد depiction...');
-                const folderResult = await uploadFileToGitHub(
+                // إنشاء مجلد depiction إذا لم يكن موجوداً
+                await uploadFileToGitHub(
                     token,
                     repo,
                     'depiction/.gitkeep',
-                    '# مجلد depiction لملفات JSON',
+                    '# هذا الملف لضمان إنشاء المجلد',
                     'Create depiction folder'
                 );
 
-                if (!folderResult.ok) {
-                    addLogMessage('ملاحظة: فشل في إنشاء مجلد depiction', 'info');
-                }
-
-                // الخطوة 2: إنشاء سير العمل
-                updateProgress(40, 'جاري إنشاء سير العمل...');
-                const workflowResult = await createGitHubWorkflow(token, repo);
-                
-                if (!workflowResult.ok) {
-                    addLogMessage('ملاحظة: فشل في إنشاء سير العمل', 'info');
-                }
-
-                // الخطوة 3: إنشاء ملف JSON
-                updateProgress(60, 'جاري إنشاء ملف JSON...');
+                // إنشاء ملف JSON للحزمة الحالية
                 const packageData = generatePackageJSON();
-                addLogMessage(`جاري إنشاء ملف لـ ${packageData.packageDisplayName}`, 'info');
-
-                // الخطوة 4: رفع ملف JSON
-                updateProgress(80, 'جاري رفع ملف JSON...');
                 const jsonPath = `depiction/${packageData.packageName}.json`;
-                const jsonResult = await uploadFileToGitHub(
+                
+                updateProgress(50, `جاري رفع ملف JSON لـ ${packageData.packageDisplayName}...`);
+                
+                const result = await uploadFileToGitHub(
                     token,
                     repo,
                     jsonPath,
@@ -809,17 +1261,16 @@ jobs:
                     `Add depiction for ${packageData.packageDisplayName}`
                 );
 
-                if (jsonResult.ok) {
+                if (result.ok) {
                     updateProgress(100, 'تم النشر بنجاح!');
-                    addLogMessage(`تم إنشاء ورفع ملف JSON لـ ${packageData.packageDisplayName} بنجاح`, 'success');
+                    addLogMessage(`تم إنشاء ملف JSON لـ ${packageData.packageDisplayName} بنجاح`, 'success');
                     
-                    if (jsonResult.data.content && jsonResult.data.content.html_url) {
-                        addLogMessage(`رابط الملف: ${jsonResult.data.content.html_url}`, 'info');
-                    }
+                    // عرض JSON الناتج
+                    document.getElementById('jsonOutput').innerText = packageData.json;
                     
                     alert(`تم إنشاء ملف JSON لـ ${packageData.packageDisplayName} ورفعه إلى GitHub بنجاح!`);
                 } else {
-                    throw new Error(jsonResult.data.message);
+                    throw new Error(result.data.message);
                 }
 
             } catch (error) {
@@ -829,31 +1280,78 @@ jobs:
             }
         }
 
-        // تحميل البيانات المحفوظة
-        function loadFromLocalStorage() {
-            const savedToken = localStorage.getItem('githubToken');
-            const savedRepo = localStorage.getItem('githubRepo');
+        // تفعيل الرفع التلقائي
+        async function setupAutoUpload() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
             
-            if (savedToken) document.getElementById('githubToken').value = savedToken;
-            if (savedRepo) document.getElementById('githubRepo').value = savedRepo;
+            if (!token || !repo) {
+                alert('يرجى إدخال رمز الوصول واسم المستودع أولاً');
+                return;
+            }
+
+            updateProgress(10, 'جاري تفعيل الرفع التلقائي...');
+            addLogMessage('بدء تفعيل الرفع التلقائي إلى GitHub', 'info');
+
+            try {
+                // إنشاء ملف workflow
+                updateProgress(50, 'جاري إنشاء سير العمل...');
+                const workflowResult = await createOrUpdateGitHubWorkflow(token, repo);
+                
+                if (!workflowResult.ok) {
+                    throw new Error('فشل في إنشاء سير العمل');
+                }
+
+                updateProgress(100, 'تم تفعيل الرفع التلقائي بنجاح!');
+                addLogMessage('تم تفعيل الرفع التلقائي بنجاح', 'success');
+                
+                alert('تم تفعيل الرفع التلقائي بنجاح! الآن سيتم رفع ملفات JSON تلقائياً إلى GitHub عند إنشائها.');
+            } catch (error) {
+                console.error('Error:', error);
+                addLogMessage(`حدث خطأ غير متوقع: ${error.message}`, 'error');
+                alert(`حدث خطأ: ${error.message}`);
+            }
         }
 
-        // حفظ البيانات في localStorage
-        function saveToLocalStorage() {
-            const githubToken = document.getElementById('githubToken').value;
-            const githubRepo = document.getElementById('githubRepo').value;
-            
-            localStorage.setItem('githubToken', githubToken);
-            localStorage.setItem('githubRepo', githubRepo);
+        // نسخ JSON إلى الحافظة
+        function copyJsonToClipboard() {
+            const jsonOutput = document.getElementById('jsonOutput').innerText;
+            if (!jsonOutput || jsonOutput === 'سيظهر محتوى JSON هنا بعد الإنشاء') {
+                alert('يرجى إنشاء JSON أولاً');
+                return;
+            }
+
+            navigator.clipboard.writeText(jsonOutput)
+                .then(() => {
+                    alert('تم نسخ JSON إلى الحافظة بنجاح!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy: ', err);
+                    alert('فشل في نسخ JSON إلى الحافظة');
+                });
         }
 
-        // تحميل الصفحة
+        // تحميل JSON كملف
+        function downloadJsonFile() {
+            const jsonOutput = document.getElementById('jsonOutput').innerText;
+            if (!jsonOutput || jsonOutput === 'سيظهر محتوى JSON هنا بعد الإنشاء') {
+                alert('يرجى إنشاء JSON أولاً');
+                return;
+            }
+
+            const packageName = document.getElementById('packageName').value || 'depiction';
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonOutput);
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", `${packageName}.json`);
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // إنشاء الأيقونات العائمة عند تحميل الصفحة
         window.onload = function() {
-            loadFromLocalStorage();
-            
-            // إضافة حدث الحفظ التلقائي
-            document.getElementById('githubToken').addEventListener('change', saveToLocalStorage);
-            document.getElementById('githubRepo').addEventListener('change', saveToLocalStorage);
+            createFloatingIcons();
         };
     </script>
 </body>
