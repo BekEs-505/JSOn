@@ -1206,18 +1206,19 @@ jobs:
                 }
             });
 
-            // جمع الروابط الاجتماعية
-            const socialElements = document.querySelectorAll('.input-group');
+            // جمع الروابط الاجتماعية - الإصلاح هنا
+            const socialElements = document.querySelectorAll('#socialLinks .input-group');
             const socialButtons = [];
             socialElements.forEach(group => {
-                const type = group.querySelector('.social-type').value;
-                const url = group.querySelector('.social-url').value;
+                const typeSelect = group.querySelector('.social-type');
+                const urlInput = group.querySelector('.social-url');
                 
-                if (url.trim() !== '') {
+                // التحقق من وجود العناصر قبل الوصول إليها
+                if (typeSelect && urlInput && urlInput.value.trim() !== '') {
                     let buttonText = '';
                     let tintColor = '#7289da';
                     
-                    switch(type) {
+                    switch(typeSelect.value) {
                         case 'discord':
                             buttonText = 'انضم إلى ديسكوردنا!';
                             tintColor = '#7289da';
@@ -1243,7 +1244,7 @@ jobs:
                     socialButtons.push({
                         "class": "DepictionButtonView",
                         "text": buttonText,
-                        "action": url.trim(),
+                        "action": urlInput.value.trim(),
                         "openExternal": true,
                         "tintColor": tintColor
                     });
