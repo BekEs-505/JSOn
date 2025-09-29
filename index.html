@@ -884,7 +884,7 @@
             }
         }
 
-        // تبديل التبويبات
+        // تبديل التبويبات - الإصلاح هنا
         function switchTab(tabName) {
             // إخفاء جميع المحتويات
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -899,8 +899,22 @@
             // إظهار المحتوى المطلوب
             document.getElementById(tabName + '-tab').classList.add('active');
             
-            // تنشيط الزر المطلوب
-            event.target.classList.add('active');
+            // تنشيط الزر المطلوب باستخدام البيانات
+            document.querySelectorAll('.tab-button').forEach(button => {
+                if (button.textContent.trim() === getTabButtonText(tabName)) {
+                    button.classList.add('active');
+                }
+            });
+        }
+
+        // الحصول على نص الزر بناءً على اسم التبويب
+        function getTabButtonText(tabName) {
+            const tabTexts = {
+                'setup': 'الإعدادات',
+                'packages': 'الحزم',
+                'preview': 'معاينة JSON'
+            };
+            return tabTexts[tabName] || tabName;
         }
 
         // إضافة رسالة إلى سجل الحالة
