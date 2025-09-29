@@ -218,7 +218,7 @@
             font-size: 1rem;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], select {
             width: 100%;
             padding: 14px 16px;
             margin-bottom: 16px;
@@ -231,7 +231,7 @@
             font-family: 'Tajawal', sans-serif;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus, select:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
@@ -499,6 +499,7 @@
             gap: 15px;
             margin-top: 20px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .json-actions button {
@@ -513,6 +514,9 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex: 1;
+            min-width: 200px;
+            justify-content: center;
         }
 
         .json-actions button:hover {
@@ -534,6 +538,38 @@
 
         .json-actions button.download-btn:hover {
             background: #009688;
+        }
+
+        .json-actions button.auto-upload-btn {
+            background: var(--secondary);
+        }
+
+        .json-actions button.auto-upload-btn:hover {
+            background: #e84393;
+        }
+
+        .packages-list {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--dark);
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .package-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .package-item:hover {
+            background: var(--primary);
+        }
+
+        .package-item:last-child {
+            border-bottom: none;
         }
 
         /* إنشاء أيقونات عشوائية تطفو في الخلفية */
@@ -583,12 +619,10 @@
 
             .json-actions {
                 flex-direction: column;
-                align-items: center;
             }
 
             .json-actions button {
                 width: 100%;
-                max-width: 250px;
             }
         }
     </style>
@@ -633,8 +667,26 @@
                         </span>
                         GitHub Repository:
                     </label>
-                    <input type="text" id="githubRepo" name="githubRepo" placeholder="مثال: TweaksDev22/depiction" required>
+                    <input type="text" id="githubRepo" name="githubRepo" placeholder="مثال: TweaksDev22/myrepo" required>
                 </div>
+
+                <button type="button" class="btn-add" onclick="fetchPackages()" style="margin-top: 10px;">
+                    <i class="fas fa-sync-alt"></i> جلب الحزم من المستودع
+                </button>
+
+                <div class="packages-list" id="packagesList" style="display: none;">
+                    <h4>الحزم الموجودة في المستودع:</h4>
+                    <div id="packagesContainer"></div>
+                </div>
+            </div>
+
+            <div class="form-section full-width">
+                <h3><i class="fas fa-cube"></i> معلومات الحزمة</h3>
+                <label for="packageName">اسم الحزمة (Package Name):</label>
+                <input type="text" id="packageName" name="packageName" placeholder="مثال: com.tweaksdev22.mytweak" required>
+
+                <label for="packageDisplayName">اسم العرض في Sileo:</label>
+                <input type="text" id="packageDisplayName" name="packageDisplayName" placeholder="اسم الحزمة كما يظهر في Sileo" required>
             </div>
 
             <div class="form-section full-width">
@@ -689,20 +741,27 @@
             <div class="form-section">
                 <h3><i class="fas fa-cog"></i> معلومات إضافية</h3>
                 <label for="section">القسم:</label>
-                <input type="text" id="section" name="section" required>
+                <select id="section" name="section" required>
+                    <option value="Tweaks">Tweaks</option>
+                    <option value="Themes">Themes</option>
+                    <option value="Apps">Apps</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Development">Development</option>
+                    <option value="System">System</option>
+                </select>
 
                 <label for="iosVersions">إصدارات iOS المتوافقة:</label>
-                <input type="text" id="iosVersions" name="iosVersions" required>
+                <input type="text" id="iosVersions" name="iosVersions" placeholder="مثال: iOS 14.0 - 16.5" required>
 
-                <label for="folderName">اسم المجلد:</label>
-                <input type="text" id="folderName" name="folderName" required>
-
-                <label for="jsonFileName">اسم ملف JSON:</label>
-                <input type="text" id="jsonFileName" name="jsonFileName" value="depiction" required>
+                <label for="price">السعر:</label>
+                <select id="price" name="price">
+                    <option value="Free">مجاني</option>
+                    <option value="Paid">مدفوع</option>
+                </select>
             </div>
 
-            <button type="button" class="generate-btn" onclick="generateAndUpload()">
-                <i class="fas fa-code"></i> إنشاء وتحميل JSON
+            <button type="button" class="generate-btn" onclick="generateAndUploadForAllPackages()">
+                <i class="fas fa-code"></i> إنشاء وتحميل JSON لجميع الحزم
             </button>
         </form>
 
@@ -763,6 +822,84 @@
             logContainer.scrollTop = logContainer.scrollHeight;
         }
 
+        // جلب الحزم من المستودع
+        async function fetchPackages() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            
+            if (!token || !repo) {
+                alert('يرجى إدخال رمز الوصول واسم المستودع أولاً');
+                return;
+            }
+
+            try {
+                addLogMessage('جاري جلب الحزم من المستودع...', 'info');
+                
+                // محاولة جلب الحزم من مجلد debs أو packages
+                const responses = await Promise.allSettled([
+                    fetch(`https://api.github.com/repos/${repo}/contents/debs`),
+                    fetch(`https://api.github.com/repos/${repo}/contents/packages`),
+                    fetch(`https://api.github.com/repos/${repo}/contents`)
+                ]);
+
+                let packages = [];
+                
+                for (const response of responses) {
+                    if (response.status === 'fulfilled' && response.value.ok) {
+                        const data = await response.value.json();
+                        const debFiles = data.filter(item => 
+                            item.name.endsWith('.deb') || 
+                            item.type === 'dir' && !['.github', 'depiction'].includes(item.name)
+                        );
+                        
+                        packages = [...packages, ...debFiles];
+                    }
+                }
+
+                // إزالة التكرارات
+                packages = packages.filter((item, index, self) => 
+                    index === self.findIndex(t => t.name === item.name)
+                );
+
+                displayPackages(packages);
+                
+            } catch (error) {
+                console.error('Error fetching packages:', error);
+                addLogMessage(`فشل في جلب الحزم: ${error.message}`, 'error');
+            }
+        }
+
+        // عرض الحزم في القائمة
+        function displayPackages(packages) {
+            const container = document.getElementById('packagesContainer');
+            const list = document.getElementById('packagesList');
+            
+            container.innerHTML = '';
+            
+            if (packages.length === 0) {
+                container.innerHTML = '<p>لا توجد حزم DEB في المستودع</p>';
+                list.style.display = 'block';
+                return;
+            }
+
+            packages.forEach(pkg => {
+                const item = document.createElement('div');
+                item.className = 'package-item';
+                item.innerHTML = `
+                    <strong>${pkg.name}</strong>
+                    ${pkg.type === 'dir' ? ' (مجلد)' : ' (ملف DEB)'}
+                `;
+                item.onclick = () => {
+                    document.getElementById('packageName').value = pkg.name.replace('.deb', '');
+                    document.getElementById('packageDisplayName').value = pkg.name.replace('.deb', '').split('.').pop();
+                };
+                container.appendChild(item);
+            });
+            
+            list.style.display = 'block';
+            addLogMessage(`تم العثور على ${packages.length} حزمة`, 'success');
+        }
+
         // إضافة حقول ديناميكية للشاشات
         function addScreenshotInput() {
             const container = document.getElementById('screenshotUrls');
@@ -799,29 +936,6 @@
             const group = btn.closest('.input-group');
             if (document.querySelectorAll('.input-group').length > 1) {
                 group.remove();
-            }
-        }
-
-        // حفظ البيانات في localStorage
-        function saveToLocalStorage() {
-            const githubToken = document.getElementById('githubToken').value;
-            const githubRepo = document.getElementById('githubRepo').value;
-            
-            localStorage.setItem('githubToken', githubToken);
-            localStorage.setItem('githubRepo', githubRepo);
-        }
-
-        // تحميل البيانات من localStorage
-        function loadFromLocalStorage() {
-            const savedToken = localStorage.getItem('githubToken');
-            const savedRepo = localStorage.getItem('githubRepo');
-            
-            if (savedToken) {
-                document.getElementById('githubToken').value = savedToken;
-            }
-            
-            if (savedRepo) {
-                document.getElementById('githubRepo').value = savedRepo;
             }
         }
 
@@ -958,82 +1072,17 @@ jobs:
             return result;
         }
 
-        // تفعيل الرفع التلقائي
-        async function setupAutoUpload() {
-            const token = document.getElementById('githubToken').value.trim();
-            const repo = document.getElementById('githubRepo').value.trim();
-            
-            if (!token || !repo) {
-                alert('يرجى إدخال رمز الوصول واسم المستودع أولاً');
-                return;
-            }
-
-            updateProgress(10, 'جاري تفعيل الرفع التلقائي...');
-            addLogMessage('بدء تفعيل الرفع التلقائي إلى GitHub', 'info');
-
-            try {
-                // إنشاء مجلد depiction إذا لم يكن موجوداً
-                const depictionResult = await uploadFileToGitHub(
-                    token,
-                    repo,
-                    'depiction/.gitkeep',
-                    '# هذا الملف لضمان إنشاء المجلد',
-                    'Create depiction folder'
-                );
-
-                if (!depictionResult.ok) {
-                    addLogMessage('ملاحظة: فشل في إنشاء مجلد depiction', 'warning');
-                } else {
-                    addLogMessage('تم إنشاء مجلد depiction بنجاح', 'success');
-                }
-
-                // إنشاء ملف workflow
-                updateProgress(50, 'جاري إنشاء سير العمل...');
-                const workflowResult = await createOrUpdateGitHubWorkflow(token, repo);
-                
-                if (!workflowResult.ok) {
-                    addLogMessage('فشل في إنشاء سير العمل', 'error');
-                    alert('فشل في تفعيل الرفع التلقائي. يرجى المحاولة مرة أخرى.');
-                    return;
-                }
-
-                updateProgress(100, 'تم تفعيل الرفع التلقائي بنجاح!');
-                addLogMessage('تم تفعيل الرفع التلقائي بنجاح', 'success');
-                
-                alert('تم تفعيل الرفع التلقائي بنجاح! الآن سيتم رفع ملفات JSON تلقائياً إلى GitHub عند إنشائها.');
-            } catch (error) {
-                console.error('Error:', error);
-                addLogMessage(`حدث خطأ غير متوقع: ${error.message}`, 'error');
-                alert(`حدث خطأ: ${error.message}`);
-            }
-        }
-
-        // توليد JSON وتحميله
-        async function generateAndUpload() {
-            // مسح سجل الحالة السابق
-            document.getElementById('statusLog').innerHTML = '';
-            
-            // جمع القيم من الحقول الثابتة
-            const githubToken = document.getElementById('githubToken').value.trim();
-            const githubRepo = document.getElementById('githubRepo').value.trim();
+        // توليد JSON للحزمة الحالية
+        function generatePackageJSON() {
+            const packageName = document.getElementById('packageName').value;
+            const packageDisplayName = document.getElementById('packageDisplayName').value;
             const headerImage = document.getElementById('headerImage').value;
             const description = document.getElementById('description').value;
             const version = document.getElementById('version').value;
             const author = document.getElementById('author').value;
             const section = document.getElementById('section').value;
             const iosVersions = document.getElementById('iosVersions').value;
-            const folderName = document.getElementById('folderName').value;
-            const jsonFileName = document.getElementById('jsonFileName').value;
-
-            // التحقق من الحقول المطلوبة
-            if (!githubToken || !githubRepo) {
-                alert('يرجى إدخال رمز الوصول واسم المستودع');
-                return;
-            }
-
-            // إظهار شريط التقدم
-            updateProgress(10, 'جاري إنشاء ملف JSON...');
-            addLogMessage('بدء عملية إنشاء وتحميل JSON', 'info');
+            const price = document.getElementById('price').value;
 
             // جمع روابط الشاشات
             const screenshotElements = document.querySelectorAll('.screenshot-url');
@@ -1151,38 +1200,9 @@ jobs:
                                 "text": iosVersions
                             },
                             {
-                                "class": "DepictionSeparatorView"
-                            },
-                            {
-                                "class": "DepictionSpacerView",
-                                "spacing": 10
-                            },
-                            {
-                                "class": "DepictionButtonView",
-                                "action": "https://tweaksdev22.github.io",
-                                "isLink": true,
-                                "yPadding": 4,
-                                "text": "TweaksDev22",
-                                "view": {
-                                    "class": "DepictionImageView",
-                                    "URL": "https://raw.githubusercontent.com/TweaksDev22/tweaksdev22.github.io/master/img/tweaksdev22.png",
-                                    "width": 80,
-                                    "height": 80,
-                                    "cornerRadius": 1,
-                                    "alignment": 1,
-                                    "accessibilityText": "TweaksDev22"
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "class": "DepictionStackView",
-                        "tabname": "Changelog",
-                        "views": [
-                            {
-                                "class": "DepictionMarkdownView",
-                                "markdown": "- الإصدار الأولي!",
-                                "useSpacing": true
+                                "class": "DepictionTableTextView",
+                                "title": "Price",
+                                "text": price === 'Free' ? 'مجاني' : 'مدفوع'
                             },
                             {
                                 "class": "DepictionSeparatorView"
@@ -1190,77 +1210,102 @@ jobs:
                             {
                                 "class": "DepictionSpacerView",
                                 "spacing": 10
-                            },
-                            {
-                                "class": "DepictionButtonView",
-                                "action": "https://tweaksdev22.github.io",
-                                "isLink": true,
-                                "yPadding": 4,
-                                "text": "TweaksDev22",
-                                "view": {
-                                    "class": "DepictionImageView",
-                                    "URL": "https://raw.githubusercontent.com/TweaksDev22/tweaksdev22.github.io/master/img/tweaksdev22.png",
-                                    "width": 80,
-                                    "height": 80,
-                                    "cornerRadius": 1,
-                                    "alignment": 1,
-                                    "accessibilityText": "TweaksDev22"
-                                }
                             }
                         ]
                     }
                 ]
             };
 
-            // تحويل JSON إلى نص
-            const jsonOutput = JSON.stringify(depictionJSON, null, 4);
+            return {
+                packageName,
+                packageDisplayName,
+                json: JSON.stringify(depictionJSON, null, 4)
+            };
+        }
 
-            // عرض JSON الناتج
-            document.getElementById('jsonOutput').innerText = jsonOutput;
+        // إنشاء وتحميل JSON لجميع الحزم
+        async function generateAndUploadForAllPackages() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            
+            if (!token || !repo) {
+                alert('يرجى إدخال رمز الوصول واسم المستودع');
+                return;
+            }
 
-            // رفع الملفات إلى GitHub
+            // مسح سجل الحالة السابق
+            document.getElementById('statusLog').innerHTML = '';
+            updateProgress(10, 'جاري إنشاء ملفات JSON...');
+
             try {
-                updateProgress(30, 'جاري إنشاء سير العمل...');
-                addLogMessage('جاري إنشاء/تحديث سير العمل GitHub...', 'info');
-                
-                // إنشاء أو تحديث ملف سير العمل
-                const workflowResult = await createOrUpdateGitHubWorkflow(githubToken, githubRepo);
-                
-                if (!workflowResult.ok) {
-                    addLogMessage('ملاحظة: فشل في إنشاء/تحديث سير العمل', 'warning');
-                } else {
-                    addLogMessage('تم إنشاء/تحديث سير العمل بنجاح', 'success');
-                }
-
-                updateProgress(60, 'جاري رفع ملف JSON...');
-                addLogMessage('جاري رفع ملف JSON إلى GitHub...', 'info');
-
-                // رفع ملف JSON
-                const jsonPath = `depiction/${folderName}/${jsonFileName}.json`;
-                const jsonResult = await uploadFileToGitHub(
-                    githubToken,
-                    githubRepo,
-                    jsonPath,
-                    jsonOutput,
-                    `Add ${jsonFileName}.json depiction file`
+                // إنشاء مجلد depiction إذا لم يكن موجوداً
+                await uploadFileToGitHub(
+                    token,
+                    repo,
+                    'depiction/.gitkeep',
+                    '# هذا الملف لضمان إنشاء المجلد',
+                    'Create depiction folder'
                 );
 
-                if (jsonResult.ok) {
+                // إنشاء ملف JSON للحزمة الحالية
+                const packageData = generatePackageJSON();
+                const jsonPath = `depiction/${packageData.packageName}.json`;
+                
+                updateProgress(50, `جاري رفع ملف JSON لـ ${packageData.packageDisplayName}...`);
+                
+                const result = await uploadFileToGitHub(
+                    token,
+                    repo,
+                    jsonPath,
+                    packageData.json,
+                    `Add depiction for ${packageData.packageDisplayName}`
+                );
+
+                if (result.ok) {
                     updateProgress(100, 'تم النشر بنجاح!');
-                    addLogMessage('تم رفع الملف بنجاح إلى GitHub', 'success');
+                    addLogMessage(`تم إنشاء ملف JSON لـ ${packageData.packageDisplayName} بنجاح`, 'success');
                     
-                    // عرض رابط الملف إذا كان متاحاً
-                    if (jsonResult.data.content && jsonResult.data.content.html_url) {
-                        const preElement = document.getElementById('jsonOutput');
-                        preElement.innerHTML += `\n\n\n# رابط الملف على GitHub:\n# ${jsonResult.data.content.html_url}`;
-                        addLogMessage(`رابط الملف: ${jsonResult.data.content.html_url}`, 'info');
-                    }
+                    // عرض JSON الناتج
+                    document.getElementById('jsonOutput').innerText = packageData.json;
                     
-                    alert('تم إنشاء ملف JSON ورفعه إلى GitHub بنجاح!');
+                    alert(`تم إنشاء ملف JSON لـ ${packageData.packageDisplayName} ورفعه إلى GitHub بنجاح!`);
                 } else {
-                    console.error('GitHub API error:', jsonResult.data);
-                    alert(`فشل في رفع الملف إلى GitHub. الخطأ: ${jsonResult.data.message || 'Unknown error'}`);
+                    throw new Error(result.data.message);
                 }
+
+            } catch (error) {
+                console.error('Error:', error);
+                addLogMessage(`حدث خطأ: ${error.message}`, 'error');
+                alert(`حدث خطأ: ${error.message}`);
+            }
+        }
+
+        // تفعيل الرفع التلقائي
+        async function setupAutoUpload() {
+            const token = document.getElementById('githubToken').value.trim();
+            const repo = document.getElementById('githubRepo').value.trim();
+            
+            if (!token || !repo) {
+                alert('يرجى إدخال رمز الوصول واسم المستودع أولاً');
+                return;
+            }
+
+            updateProgress(10, 'جاري تفعيل الرفع التلقائي...');
+            addLogMessage('بدء تفعيل الرفع التلقائي إلى GitHub', 'info');
+
+            try {
+                // إنشاء ملف workflow
+                updateProgress(50, 'جاري إنشاء سير العمل...');
+                const workflowResult = await createOrUpdateGitHubWorkflow(token, repo);
+                
+                if (!workflowResult.ok) {
+                    throw new Error('فشل في إنشاء سير العمل');
+                }
+
+                updateProgress(100, 'تم تفعيل الرفع التلقائي بنجاح!');
+                addLogMessage('تم تفعيل الرفع التلقائي بنجاح', 'success');
+                
+                alert('تم تفعيل الرفع التلقائي بنجاح! الآن سيتم رفع ملفات JSON تلقائياً إلى GitHub عند إنشائها.');
             } catch (error) {
                 console.error('Error:', error);
                 addLogMessage(`حدث خطأ غير متوقع: ${error.message}`, 'error');
@@ -1294,11 +1339,11 @@ jobs:
                 return;
             }
 
-            const jsonFileName = document.getElementById('jsonFileName').value || 'depiction';
+            const packageName = document.getElementById('packageName').value || 'depiction';
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonOutput);
             const downloadAnchorNode = document.createElement('a');
             downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", `${jsonFileName}.json`);
+            downloadAnchorNode.setAttribute("download", `${packageName}.json`);
             document.body.appendChild(downloadAnchorNode);
             downloadAnchorNode.click();
             downloadAnchorNode.remove();
@@ -1307,15 +1352,6 @@ jobs:
         // إنشاء الأيقونات العائمة عند تحميل الصفحة
         window.onload = function() {
             createFloatingIcons();
-            
-            // تحميل البيانات المحفوظة
-            loadFromLocalStorage();
-            
-            // إضافة حدث الحفظ التلقائي عند تغيير التوكن
-            document.getElementById('githubToken').addEventListener('blur', saveToLocalStorage);
-            document.getElementById('githubToken').addEventListener('change', saveToLocalStorage);
-            document.getElementById('githubRepo').addEventListener('blur', saveToLocalStorage);
-            document.getElementById('githubRepo').addEventListener('change', saveToLocalStorage);
         };
     </script>
 </body>
